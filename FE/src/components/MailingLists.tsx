@@ -1,13 +1,19 @@
-import { useState } from 'react'
-import { CalendarDaysIcon, HandRaisedIcon } from '@heroicons/react/24/outline'
-import EmailForm from './EmailForm'
+import { useEffect, useState } from 'react'
 import MailListItem from './MailListItem'
-import { Link } from 'react-router-dom'
+import axios from 'axios'
+import { useAuth } from '@clerk/clerk-react';
 
 export default function MailingLists() {
-    const [emails, setEmails] = useState<string[]>([]) // Define the type as string array
+    // form data
+    const [recipientsList, setRecipientsList] = useState<string[]>([]) // Define the type as string array
     const [newEmail, setNewEmail] = useState('')
-    const [listName, setListName] = useState('')
+    const [mailinglistName, setMailinglistName] = useState('')
+
+    // data received from BE
+    const [mailingListsData, setMailingListsData] = useState<any>([]);
+
+    const { getToken, isLoaded, isSignedIn } = useAuth();
+
 
     const handleNewEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setNewEmail(event.target.value)
@@ -15,24 +21,54 @@ export default function MailingLists() {
 
     const handleAddEmail = () => {
         if (newEmail.trim() !== '') {
-            setEmails([...emails, newEmail])
+            setRecipientsList([...recipientsList, newEmail])
             setNewEmail('')
         }
     }
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
-        // TODO: send data to backend
-        // post request to /newmaillist
-        console.log({ 'listName': listName, 'emails': emails })
-        // TODO: clear the form
-        setEmails([])
-        setNewEmail('')
-        setListName('')
-        // TODO: redirect to view list page
+        try {
+            await axios.post('http://localhost:3000/new/mailinglist',
+                { 'mailinglistName': mailinglistName, 'recipientsList': recipientsList },
+                {
+                    headers: {
+                        'Authorization': `Bearer ${await getToken()}`
+                    }
+                }
+            )
+            // post request to /newmaillist
+            console.log({ 'mailinglistName': mailinglistName, 'recipientsList': recipientsList })
+            // TODO: clear the form
+            setRecipientsList([])
+            setNewEmail('')
+            setMailinglistName('')
+            // TODO: redirect to view list page
 
-        console.log('Form submitted')
+            console.log('Form submitted')
+        } catch (error) {
+            console.error('Error submitting form:', error)
+        }
     }
+
+    useEffect(() => {
+        const fetchMailingLists = async () => {
+            try {
+                const response = await axios.get('http://localhost:3000/mailinglists', {
+                    headers: {
+                        'Authorization': `Bearer ${await getToken()}`
+                    }
+                })
+                console.log('Mailing lists issss:', response.data)
+                setMailingListsData(response.data)
+            } catch (error) {
+                console.error('Error fetching mailing lists:', error)
+            }
+        }
+        fetchMailingLists()
+    }, []);
+
+    console.log('recipientsList: ', recipientsList)
 
     return (
         <div className=" py-16 sm:py-24 lg:py-32 bg-pink-100 p-4 flex flex-wrap">
@@ -49,8 +85,8 @@ export default function MailingLists() {
                             id="listName"
                             type="text"
                             placeholder="Enter list name"
-                            value={listName}
-                            onChange={(e) => setListName(e.target.value)}
+                            value={mailinglistName}
+                            onChange={(e) => setMailinglistName(e.target.value)}
                         />
                     </div>
                     <div className="mb-4">
@@ -83,7 +119,7 @@ export default function MailingLists() {
                 <div className="mt-4">
                     <h3 className="text-lg font-bold mb-2">Emails:</h3>
                     <ul className="list-disc pl-5">
-                        {emails.map((email, index) => (
+                        {recipientsList.map((email, index) => (
                             <li key={index} className="text-gray-700">{email}</li>
                         ))}
                     </ul>
@@ -91,10 +127,15 @@ export default function MailingLists() {
             </div>
             <div className="">
                 <h1 className="text-2xl font-bold mb-4">Mailing Lists</h1>
+                {console.log('mailingListsData hereeee: ', mailingListsData)
+                }
+                {mailingListsData.map((mailingList: any, index: any) => (
+                    <MailListItem key={index} name={mailingList.name} recipients={mailingList.recipients} />
+                ))}
+                {/* <MailListItem /> */}
 
-                <MailListItem />
-                <MailListItem />
             </div>
+
         </div>
     )
 }

@@ -23,13 +23,13 @@ model Sender {
 
   sentMessages Message[]
   blasts       EmailBlast[]
+  mailingLists MailingList[]
 }
 
 model Recipient {
   id        Int      @id @default(autoincrement())
   email     String   @unique
   name      String?
-  clerkId   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -45,11 +45,11 @@ model Message {
   updatedAt   DateTime @updatedAt
   recipientId Int
   senderId    Int
-  blastId     Int
+  blastId     Int?
 
   recipient Recipient  @relation(fields: [recipientId], references: [id])
   sender    Sender     @relation(fields: [senderId], references: [id])
-  blast     EmailBlast @relation(fields: [blastId], references: [id])
+  blast     EmailBlast? @relation(fields: [blastId], references: [id])
 }
 
 model MailingList {
@@ -57,7 +57,9 @@ model MailingList {
   name      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  senderId  Int 
 
+  sender Sender @relation(fields: [senderId], references: [id])
   recipients  Recipient[]  @relation("MailingListRecipients")
   emailBlasts EmailBlast[]
 }

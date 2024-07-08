@@ -3,8 +3,10 @@ import { clerkClient, LooseAuthProp } from "@clerk/clerk-sdk-node";
 import { NextFunction, Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 
-interface CustomRequest extends Request {
-  user?: any;
+declare global {
+  interface CustomRequest extends Request {
+    user?: any;
+  }
 }
 
 const prisma = new PrismaClient();
