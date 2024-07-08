@@ -13,21 +13,64 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
+model Sender {
   id        Int      @id @default(autoincrement())
   email     String   @unique
   name      String?
-  emails    Email[]
+  clerkId   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  sentMessages Message[]
+  blasts       EmailBlast[]
 }
 
-model Email {
-  id      Int      @id @default(autoincrement())
-  subject String
-  body    String
-  sentAt  DateTime @default(now())
-  userId  Int
+model Recipient {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String?
+  clerkId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  user User @relation(fields: [userId], references: [id])
+  receievedMessages Message[]
+  mailingLists      MailingList[] @relation("MailingListRecipients")
+}
+
+model Message {
+  id          Int      @id @default(autoincrement())
+  subject     String
+  body        String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  recipientId Int
+  senderId    Int
+  blastId     Int
+
+  recipient Recipient  @relation(fields: [recipientId], references: [id])
+  sender    Sender     @relation(fields: [senderId], references: [id])
+  blast     EmailBlast @relation(fields: [blastId], references: [id])
+}
+
+model MailingList {
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  recipients  Recipient[]  @relation("MailingListRecipients")
+  emailBlasts EmailBlast[]
+}
+
+model EmailBlast {
+  id           Int      @id @default(autoincrement())
+  name         String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  targetListId Int
+  senderId     Int
+
+  messages   Message[]
+  targetList MailingList @relation(fields: [targetListId], references: [id])
+  sender     Sender      @relation(fields: [senderId], references: [id])
 }
