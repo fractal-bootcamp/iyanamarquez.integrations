@@ -1,15 +1,29 @@
 import { Link } from "react-router-dom";
 
-const MailListItem = () => {
+const MailListItem = (props: { name: string, recipients: string[] }) => {
     return <div className="relative flex flex-col text-gray-700 bg-white shadow-md w-96 rounded-xl bg-clip-border border m-2">
         <nav className="flex min-w-[240px] flex-col gap-1 p-2 font-sans text-base font-normal text-blue-gray-700">
             <div role="button"
                 className="flex items-center w-full p-3 py-1 pl-4 pr-1 leading-tight transition-all rounded-lg outline-none text-start hover:bg-blue-gray-50 hover:bg-opacity-80 hover:text-blue-gray-900 focus:bg-blue-gray-50 focus:bg-opacity-80 focus:text-blue-gray-900 active:bg-blue-gray-50 active:bg-opacity-80 active:text-blue-gray-900">
                 <Link to="/viewlist/1">
                     <h1 className="text-2xl font-bold mb-4 hover:text-blue-gray-900 hover:underline">
-                        Item One
+                        {props.name}
                     </h1>
                 </Link>
+                <div>
+
+                    <h2>Recipients</h2>
+                    <ul className=" text-gray-700 ">
+                        {props.recipients.map((recipient, index) => (
+                            <li key={index} className="">
+                                <a className=" hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" href="#">
+                                    {recipient.email}
+                                </a>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+
                 <div className="grid ml-auto place-items-center justify-self-end">
                     <button
                         className="relative h-10 max-h-[40px] w-10 max-w-[40px] select-none rounded-lg text-center align-middle font-sans text-xs font-medium uppercase text-blue-gray-500 transition-all hover:bg-blue-gray-500/10 active:bg-blue-gray-500/30 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
