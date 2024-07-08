@@ -7,7 +7,11 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import App from './App.tsx'
-import Example from './components/Example.tsx';
+import EmailForm from './components/EmailForm.tsx';
+import MailingLists from './components/MailingLists.tsx';
+import Navbar from './components/Navbar.tsx';
+import Layout from './Layout.tsx';
+import MailListView from './components/MailListView.tsx';
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
 
@@ -18,11 +22,25 @@ if (!PUBLISHABLE_KEY) {
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />,
-  },
-  {
-    path: "/example",
-    element: <Example />,
+    element: <Layout />, // Use Layout here
+    children: [
+      {
+        path: "/",
+        element: <App />,
+      },
+      {
+        path: "/composeemail",
+        element: <EmailForm />,
+      },
+      {
+        path: "/viewlists",
+        element: <MailingLists />,
+      },
+      {
+        path: "/viewlist/:id",
+        element: <MailListView />,
+      },
+    ],
   },
 ]);
 ReactDOM.createRoot(document.getElementById('root')!).render(

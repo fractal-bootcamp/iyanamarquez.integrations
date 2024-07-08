@@ -17,10 +17,10 @@ const Navbar = () => {
                 <Link to="/">Dashboard</Link>
             </div>
             <div>
-                <Link to="/example">Mailing List</Link>
+                <Link to="/viewlists">Mailing List</Link>
             </div>
             <div>
-                <Link to="/email-composer">Email composer</Link>
+                <Link to="/composeemail">Email composer</Link>
             </div>
         </nav>
     </div>;
