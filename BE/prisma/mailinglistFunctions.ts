@@ -75,7 +75,6 @@ export const removeEmailFromMailingList = async (
       },
     },
   });
-  console.log("mailingList deleted:", mailingList);
 
   return mailingList;
 };
@@ -84,13 +83,39 @@ export const updateMailingList = async (
   mailingListId: number,
   recipientDetails: { email: string }
 ) => {
+  // Check if the recipient already exists
+  const existingRecipient = await prisma.recipient.findUnique({
+    where: { email: recipientDetails.email },
+  });
+
+  let recipientId;
+
+  if (existingRecipient) {
+    recipientId = existingRecipient.id;
+  } else {
+    // Create a new recipient
+    const newRecipient = await prisma.recipient.create({
+      data: { email: recipientDetails.email },
+    });
+    recipientId = newRecipient.id;
+  }
+
+  // Link the recipient to the mailing list
   const mailingList = await prisma.mailingList.update({
     where: { id: mailingListId },
     data: {
       recipients: {
-        create: recipientDetails,
+        connect: { id: recipientId },
       },
     },
+  });
+
+  return mailingList;
+};
+
+export const deleteMailingList = async (mailingListId: number) => {
+  const mailingList = await prisma.mailingList.delete({
+    where: { id: mailingListId },
   });
   return mailingList;
 };

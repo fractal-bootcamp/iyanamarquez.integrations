@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 
 const URL = import.meta.env.VITE_REACT_APP_API_URL;
-console.log(URL)
 
 const EmailForm = () => {
     const navigate = useNavigate(); // Initialize useNavigate
@@ -34,12 +33,10 @@ const EmailForm = () => {
                 .then(response => {
                     navigate('/'); // Redirect to the success page
 
-                    console.log('Email sent successfully:', response.data);
                 })
                 .catch(error => {
                     console.error('There was an error sending the email:', error);
                 });
-            console.log(emailDetails)
         }
         sendBlast()
         setEmailDetails({
@@ -58,7 +55,6 @@ const EmailForm = () => {
                         'Authorization': `Bearer ${await getToken()}`
                     }
                 })
-                console.log('Mailing lists issss:', response.data)
                 setMailingListsData(response.data)
             } catch (error) {
                 console.error('Error fetching mailing lists:', error)
@@ -67,7 +63,6 @@ const EmailForm = () => {
         fetchMailingLists()
     }, []);
 
-    console.log(emailDetails)
 
 
     return <div className=" p-6">

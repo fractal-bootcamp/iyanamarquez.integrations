@@ -9,9 +9,9 @@ import {
   StrictAuthProp,
 } from "@clerk/clerk-sdk-node";
 
-import { Prisma } from "@prisma/client";
 import {
   createNewMailingList,
+  deleteMailingList,
   getMailingList,
   getMailingListDetails,
   getMailingListsByUserId,
@@ -34,7 +34,6 @@ app.post(
   ClerkExpressRequireAuth({}),
   optionalUser,
   async (req, res) => {
-    console.log("helooooo");
     const mailinglistName = req.body.mailinglistName;
     const recipientsList = req.body.recipientsList;
     const user = req.user;
@@ -44,7 +43,6 @@ app.post(
       recipientsList
     );
 
-    console.log("newList made: ", newList);
     res.send(newList);
   }
 );
@@ -56,7 +54,6 @@ app.get(
   async (req, res) => {
     const userId = req.user.id;
     const mailinglist = await getMailingListsByUserId(userId);
-    // console.log("mailinglist: ", mailinglist);
     res.send(mailinglist);
   }
 );
@@ -95,14 +92,12 @@ app.post(
     const mailingListId = Number(blastDetails.mailList);
     const message = blastDetails.message;
     const subject = blastDetails.subject;
-    console.log("here", blastDetails);
     const blastMail = await createNewBlastMail(
       senderId,
       subject,
       message,
       mailingListId
     );
-    // console.log("blastMail: ", blastMail);
     res.send(blastMail);
   }
 );
@@ -117,11 +112,9 @@ app.post(
 // export default app;
 
 app.put("/removeUser/mailinglists/:id", async (req, res) => {
-  console.log("req.body: ", req.body);
   const mailListId = Number(req.params.id);
   const recipientId = Number(req.body.recipientId);
   const mailingList = await removeEmailFromMailingList(mailListId, recipientId);
-  // console.log("mailingListUserId: ", mailingListUserId);
   res.send(mailingList);
 });
 
@@ -132,6 +125,11 @@ app.put("/updateMailingList/:id", async (req, res) => {
   res.send(mailingList);
 });
 
+app.delete("/delete/mailinglist/:id", async (req, res) => {
+  const mailListId = Number(req.params.id);
+  const mailingList = await deleteMailingList(mailListId);
+  res.send(mailingList);
+});
 const port = 3000;
 
 app.listen(port, () => {

@@ -16,7 +16,6 @@ export async function createNewBlastMail(
   if (!mailingList) {
     throw new Error("Mailing list not found");
   }
-  console.log("making blast");
   return await prisma.emailBlast.create({
     data: {
       subject: subject,

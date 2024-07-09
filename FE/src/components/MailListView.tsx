@@ -34,7 +34,6 @@ const MailListView = () => {
                     'Authorization': `Bearer ${await getToken()}`
                 }
             })
-            console.log('Mailing lists issss:', response.data)
             setMailingListData(response.data)
             setRecipients(response.data.recipients)
 
@@ -84,7 +83,6 @@ const MailListView = () => {
             fetchMailingLists()
         }, 1000)
 
-        console.log('deleting email');
     }
 
     return (

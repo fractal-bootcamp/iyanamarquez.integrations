@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 
 const MailListItem = (props: { name: string, recipients: string[], id: string }) => {
-    console.log(props)
     return <div className="relative flex flex-col text-gray-700 bg-white shadow-md w-96 rounded-xl bg-clip-border border m-2">
         <nav className="flex min-w-[240px] flex-col gap-1 p-2 font-sans text-base font-normal text-blue-gray-700">
             <div role="button"
