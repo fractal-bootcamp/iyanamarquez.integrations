@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from 'axios';
 import { useAuth } from '@clerk/clerk-react';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import CharacterCounter from "./CharacterCounter";
 
 
 const URL = import.meta.env.VITE_REACT_APP_API_URL;
@@ -86,8 +87,9 @@ const EmailForm = () => {
                     </div>
                     <div className="sm:col-span-2 mb-5">
                         <label htmlFor="message" className="block mb-2 text-sm font-medium text-gray-900">Your message</label>
-                        <textarea id="message" name="message" value={emailDetails.message} onChange={(e) => setEmailDetails({ ...emailDetails, [e.target.name]: e.target.value })} rows={6} className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg shadow-sm border border-gray-300 focus:ring-primary-500 focus:border-primary-500" placeholder="write your message here"></textarea>
+                        <textarea id="message" maxLength={280} name="message" value={emailDetails.message} onChange={(e) => setEmailDetails({ ...emailDetails, [e.target.name]: e.target.value })} rows={6} className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg shadow-sm border border-gray-300 focus:ring-primary-500 focus:border-primary-500" placeholder="write your message here"></textarea>
                     </div>
+                    <CharacterCounter newcontent={emailDetails.message} />
                     <button type="submit" className=" py-3 px-5 text-sm font-medium text-center text-black rounded-lg bg-pink-100 sm:w-fit hover:bg-pink-200 focus:ring-4 focus:outline-none focus:ring-primary-300">Send message</button>
                 </div>
             </section>

@@ -12,6 +12,8 @@ import MailingLists from './components/MailingLists.tsx';
 import Navbar from './components/Navbar.tsx';
 import Layout from './Layout.tsx';
 import MailListView from './components/MailListView.tsx';
+import Tiptap from './components/Tiptap.tsx';
+import CharacterCounter from './components/CharacterCounter.tsx';
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
 
@@ -39,6 +41,14 @@ const router = createBrowserRouter([
       {
         path: "/viewlist/:id",
         element: <MailListView />,
+      },
+      {
+        path: "/tiptap",
+        element: <Tiptap />,
+      },
+      {
+        path: "/tiptap2",
+        element: <CharacterCounter />,
       },
     ],
   },
