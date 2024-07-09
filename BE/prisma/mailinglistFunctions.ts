@@ -60,3 +60,37 @@ export const getMailingList = async (mailingListId: number) => {
 
   return mailingList;
 };
+
+export const removeEmailFromMailingList = async (
+  mailingListId: number,
+  recipientId: number
+) => {
+  const mailingList = await prisma.mailingList.update({
+    where: { id: mailingListId },
+    data: {
+      recipients: {
+        delete: {
+          id: recipientId,
+        },
+      },
+    },
+  });
+  console.log("mailingList deleted:", mailingList);
+
+  return mailingList;
+};
+
+export const updateMailingList = async (
+  mailingListId: number,
+  recipientDetails: { email: string }
+) => {
+  const mailingList = await prisma.mailingList.update({
+    where: { id: mailingListId },
+    data: {
+      recipients: {
+        create: recipientDetails,
+      },
+    },
+  });
+  return mailingList;
+};
