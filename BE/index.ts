@@ -14,7 +14,7 @@ import {
   createNewMailingList,
   getMailingListsByUserId,
 } from "./prisma/mailinglistFunctions";
-import { createNewBlastMail } from "./prisma/blastmailFunctions";
+import { createNewBlastMail, getAllBlasts } from "./prisma/blastmailFunctions";
 
 const app = express();
 app.use(cors());
@@ -52,8 +52,19 @@ app.get(
   async (req, res) => {
     const userId = req.user.id;
     const mailinglist = await getMailingListsByUserId(userId);
-    console.log("mailinglist: ", mailinglist);
+    // console.log("mailinglist: ", mailinglist);
     res.send(mailinglist);
+  }
+);
+
+app.get(
+  "/getAllBlasts",
+  ClerkExpressRequireAuth({}),
+  optionalUser,
+  async (req, res) => {
+    const userId = req.user.id;
+    const blasts = await getAllBlasts(userId);
+    res.send(blasts);
   }
 );
 
@@ -64,18 +75,20 @@ app.post(
   async (req, res) => {
     // TODO: send email VIA email service
     // TODO: save email to database
-    console.log(req.body);
-    const mailingListId = req.body.id;
-    const mailingList = await mailingListId;
+    const blastDetails = req.body.emailDetails;
     const senderId = req.user.id;
-    const message = req.body.message;
+    const mailingListId = Number(blastDetails.mailList);
+    const message = blastDetails.message;
+    const subject = blastDetails.subject;
+    console.log("here", blastDetails);
     const blastMail = await createNewBlastMail(
-      mailingListId,
       senderId,
-      message
+      subject,
+      message,
+      mailingListId
     );
-    console.log("blastMail: ", blastMail);
-    res.send("Email sent");
+    // console.log("blastMail: ", blastMail);
+    res.send(blastMail);
   }
 );
 

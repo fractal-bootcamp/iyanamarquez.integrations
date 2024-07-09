@@ -2,10 +2,39 @@ import { Link } from "react-router-dom";
 import EmailForm from "./EmailForm";
 import MailingLists from "./MailingLists";
 import Example from "./MailingLists";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { useAuth } from '@clerk/clerk-react';
+
 
 const Dashboard = () => {
-    return <section className="bg-pink-100">
-        <div className="py-8 px-4 mx-auto max-w-screen-xl text-center lg:py-16">
+    const { getToken } = useAuth();
+    const URL = import.meta.env.VITE_REACT_APP_API_URL;
+
+    // TODO: get the lists from the backend
+    const [emailBlasts, setEmailBlasts] = useState([]);
+    useEffect(() => {
+
+        const fetchEmailBlasts = async () => {
+            try {
+                const response = await axios.get(`${URL}/getAllBlasts`, {
+                    headers: {
+                        'Authorization': `Bearer ${await getToken()}`
+                    }
+                })
+                console.log('Mailing lists issss:', response.data)
+                setEmailBlasts(response.data)
+            } catch (error) {
+                console.error('Error fetching mailing lists:', error)
+            }
+        }
+        fetchEmailBlasts()
+    }, []);
+
+    console.log('emailBlasts:', emailBlasts)
+
+    return <section className="">
+        <div className="py-8 px-4 mx-auto max-w-screen-xl text-center lg:py-16 border-b-2 border-gray-200 mb-5">
             <h1 className="mb-4 text-4xl font-extrabold tracking-tight leading-none text-gray-900 md:text-5xl lg:text-6xl ">Welcome to the dashboard</h1>
             <p className="mb-8 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 lg:px-48 ">Here at Flowbite we focus on markets where technology, innovation, and capital can unlock long-term value and drive economic growth.</p>
             <div className="flex flex-col space-y-4 sm:flex-row sm:justify-center sm:space-y-0">
@@ -18,6 +47,50 @@ const Dashboard = () => {
                     Create blast
                 </Link>
             </div>
+        </div>
+        <div className="">
+
+
+            <div className="relative overflow-x-auto overflow-y-auto h-[500px]">
+                <table className="w-full text-sm text-left rtl:text-right text-gray-500">
+                    <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+                        <tr>
+                            <th scope="col" className="px-6 py-3">
+                                Blast Name
+                            </th>
+                            <th scope="col" className="px-6 py-3">
+                                Blast Subject
+                            </th>
+                            <th scope="col" className="px-6 py-3">
+                                Mailing list
+                            </th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {emailBlasts.map((blast) => (
+                            <tr className="bg-white border-b ">
+                                <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                                    {blast.subject}
+                                </th>
+                                <td className="px-6 py-4">
+                                    {blast.body}
+                                </td>
+                                <td className="px-6 py-4 hover:underline">
+                                    <Link to={`/viewlists/${blast.targetList.id}`}>
+                                        {blast.targetList.name}
+                                    </Link>
+                                </td>
+
+                            </tr>
+                        ))}
+
+
+                    </tbody>
+                </table>
+            </div>
+
+
         </div>
     </section>
 

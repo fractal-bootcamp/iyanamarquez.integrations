@@ -4,6 +4,7 @@ const prisma = new PrismaClient();
 
 export async function createNewBlastMail(
   senderId: number,
+  subject: string,
   message: string,
   mailingListId: number
 ) {
@@ -15,37 +16,25 @@ export async function createNewBlastMail(
   if (!mailingList) {
     throw new Error("Mailing list not found");
   }
-
+  console.log("making blast");
   return await prisma.emailBlast.create({
     data: {
-      name: message,
-      sender: {
-        connect: {
-          id: senderId,
-        },
-      },
-      targetList: {
-        connect: {
-          id: mailingListId,
-        },
-      },
-      messages: {
-        create: mailingList.recipients.map((recipient) => ({
-          subject: message,
-          body: message,
-          recipient: {
-            connectOrCreate: {
-              where: { email: recipient.email },
-              create: { email: recipient.email },
-            },
-          },
-          sender: {
-            connect: {
-              id: senderId,
-            },
-          },
-        })),
-      },
+      subject: subject,
+      senderId: senderId,
+      targetListId: mailingListId,
+      body: message,
+    },
+  });
+}
+
+export async function getAllBlasts(senderId: number) {
+  return await prisma.emailBlast.findMany({
+    where: {
+      senderId: senderId,
+    },
+    include: {
+      sender: true,
+      targetList: true,
     },
   });
 }

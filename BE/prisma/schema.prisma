@@ -45,11 +45,11 @@ model Message {
   updatedAt   DateTime @updatedAt
   recipientId Int
   senderId    Int
-  blastId     Int?
+  blastId     Int
 
-  recipient Recipient  @relation(fields: [recipientId], references: [id])
-  sender    Sender     @relation(fields: [senderId], references: [id])
-  blast     EmailBlast? @relation(fields: [blastId], references: [id])
+  recipient Recipient  @relation(fields: [recipientId], references: [id], onDelete: Cascade)
+  sender    Sender     @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  blast     EmailBlast @relation(fields: [blastId], references: [id], onDelete: Cascade)
 }
 
 model MailingList {
@@ -59,20 +59,21 @@ model MailingList {
   updatedAt DateTime @updatedAt
   senderId  Int 
 
-  sender Sender @relation(fields: [senderId], references: [id])
+  sender Sender @relation(fields: [senderId], references: [id], onDelete: Cascade)
   recipients  Recipient[]  @relation("MailingListRecipients")
   emailBlasts EmailBlast[]
 }
 
 model EmailBlast {
   id           Int      @id @default(autoincrement())
-  name         String
+  subject      String
+  body          String
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   targetListId Int
   senderId     Int
 
   messages   Message[]
-  targetList MailingList @relation(fields: [targetListId], references: [id])
-  sender     Sender      @relation(fields: [senderId], references: [id])
+  targetList MailingList @relation(fields: [targetListId], references: [id], onDelete: Cascade)
+  sender     Sender      @relation(fields: [senderId], references: [id], onDelete: Cascade)
 }
