@@ -47,3 +47,16 @@ export const getMailingListDetails = async (mailingListId: number) => {
 
   return mailingList.recipients.map((recipient) => recipient.email);
 };
+
+export const getMailingList = async (mailingListId: number) => {
+  const mailingList = await prisma.mailingList.findUnique({
+    where: { id: mailingListId },
+    include: { recipients: true },
+  });
+
+  if (!mailingList) {
+    throw new Error("Mailing list not found");
+  }
+
+  return mailingList;
+};
