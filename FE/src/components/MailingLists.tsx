@@ -3,6 +3,10 @@ import MailListItem from './MailListItem'
 import axios from 'axios'
 import { useAuth } from '@clerk/clerk-react';
 import { Link } from 'react-router-dom';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
+
+
 
 export default function MailingLists() {
     // form data
@@ -14,6 +18,7 @@ export default function MailingLists() {
     const [mailingListsData, setMailingListsData] = useState<any>([]);
 
     const { getToken, isLoaded, isSignedIn } = useAuth();
+    const navigate = useNavigate(); // Initialize useNavigate
 
 
     const handleNewEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,16 +44,30 @@ export default function MailingLists() {
                 }
             )
             // post request to /newmaillist
-            console.log({ 'mailinglistName': mailinglistName, 'recipientsList': recipientsList })
             // TODO: clear the form
             setRecipientsList([])
             setNewEmail('')
             setMailinglistName('')
             // TODO: redirect to view list page
 
-            console.log('Form submitted')
         } catch (error) {
             console.error('Error submitting form:', error)
+        }
+    }
+
+    const handleDeleteMailingList = async (event: React.FormEvent<HTMLFormElement>, mailingListId: string) => {
+        event.preventDefault()
+        try {
+            await axios.delete(`http://localhost:3000/delete/mailinglist/${mailingListId}`, {
+                headers: {
+                    'Authorization': `Bearer ${await getToken()}`
+                }
+            }).then((response) => {
+                navigate(0)
+
+            })
+        } catch (error) {
+            console.error('Error deleting mailing list:', error)
         }
     }
 
@@ -60,7 +79,6 @@ export default function MailingLists() {
                         'Authorization': `Bearer ${await getToken()}`
                     }
                 })
-                console.log('Mailing lists issss:', response.data)
                 setMailingListsData(response.data)
             } catch (error) {
                 console.error('Error fetching mailing lists:', error)
@@ -69,7 +87,6 @@ export default function MailingLists() {
         fetchMailingLists()
     }, []);
 
-    console.log('recipientsList: ', recipientsList)
 
     return (
         <div className="p-6 flex flex-col ">
@@ -134,7 +151,7 @@ export default function MailingLists() {
                 </div>
                 <div className="flow-root bg-gradient-to-r from-violet-200 to-pink-200 h-[30vh]">
                     <ul role="list" className="divide-y divide-gray-200  rounded-xl ">
-                        {mailingListsData.map((mailingList: any, index: any) => {
+                        {mailingListsData.map((mailingList: any) => {
                             return (
                                 <li className="bg-white m-2 rounded-xl p-4">
                                     <div className="flex items-center">
@@ -150,7 +167,7 @@ export default function MailingLists() {
                                             </p>
                                         </div>
                                         <div className="inline-flex items-center text-base font-semibold text-gray-900">
-                                            <Link to={`/viewlist/${mailingList.id}`}>{mailingList.recipients.length}</Link>
+                                            <DeleteIcon onClick={(e) => handleDeleteMailingList(e, mailingList.id)} />
                                         </div>
                                     </div>
                                 </li>

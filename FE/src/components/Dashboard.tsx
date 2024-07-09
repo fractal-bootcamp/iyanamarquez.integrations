@@ -22,7 +22,6 @@ const Dashboard = () => {
                         'Authorization': `Bearer ${await getToken()}`
                     }
                 })
-                console.log('Mailing lists issss:', response.data)
                 setEmailBlasts(response.data)
             } catch (error) {
                 console.error('Error fetching mailing lists:', error)
@@ -30,8 +29,6 @@ const Dashboard = () => {
         }
         fetchEmailBlasts()
     }, []);
-
-    console.log('emailBlasts:', emailBlasts)
 
     return <section className="">
         <div className="py-8 px-4 mx-auto max-w-screen-xl text-center lg:py-16 border-b-2 border-gray-200 mb-5 bg-gradient-to-r from-violet-200 to-pink-200">

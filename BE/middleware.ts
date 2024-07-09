@@ -46,7 +46,6 @@ const optionalUser = async (
         email: clerkEmail,
       },
     });
-    console.log("user created");
   }
 
   next();
