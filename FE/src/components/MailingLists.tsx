@@ -74,7 +74,7 @@ export default function MailingLists() {
     return (
         <div className="p-6 flex flex-col ">
 
-            <div className=" p-4 bg-white rounded-md shadow-2xl mb-5 self-center md:w-1/2 bg-slate-100">
+            <div className=" p-4 bg-white rounded-md mb-5 md:w-1/2 border border-gray-200">
                 <h2 className="text-xl font-bold mb-4">Create New Mailing List</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="mb-4">
@@ -104,7 +104,7 @@ export default function MailingLists() {
                         />
                     </div>
                     <button
-                        className="bg-pink-500 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-4"
+                        className="mr-2 bg-pink-500 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-4"
                         type="button"
                         onClick={handleAddEmail}
                     >
@@ -127,12 +127,12 @@ export default function MailingLists() {
                 </div>
             </div>
 
-            <div className="p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8 overflow-y-scroll h-[50vh] bg-gradient-to-r from-violet-200 to-pink-200">
+            <div className="p-4 bg-white border border-gray-200 rounded-lg sm:p-8 overflow-y-scroll ">
                 <div className="flex items-center justify-between mb-4">
                     <h5 className="text-xl font-bold leading-none text-gray-900">All mailing lists</h5>
                     List total
                 </div>
-                <div className="flow-root">
+                <div className="flow-root bg-gradient-to-r from-violet-200 to-pink-200 h-[30vh]">
                     <ul role="list" className="divide-y divide-gray-200  rounded-xl ">
                         {mailingListsData.map((mailingList: any, index: any) => {
                             return (
@@ -145,8 +145,9 @@ export default function MailingLists() {
                                             <p className="text-sm font-medium text-gray-900 truncate">
                                                 {mailingList.name}
                                             </p>
-                                            <p className="text-sm text-gray-500 truncate">
-                                                Click to view more                                            </p>
+                                            <p className="text-sm text-gray-500 truncate hover:underline">
+                                                <Link to={`/viewlist/${mailingList.id}`}>Click to view more</Link>
+                                            </p>
                                         </div>
                                         <div className="inline-flex items-center text-base font-semibold text-gray-900">
                                             <Link to={`/viewlist/${mailingList.id}`}>{mailingList.recipients.length}</Link>

@@ -15,6 +15,8 @@ import {
   getMailingList,
   getMailingListDetails,
   getMailingListsByUserId,
+  removeEmailFromMailingList,
+  updateMailingList,
 } from "./prisma/mailinglistFunctions";
 import { createNewBlastMail, getAllBlasts } from "./prisma/blastmailFunctions";
 
@@ -113,6 +115,23 @@ app.post(
 // });
 
 // export default app;
+
+app.put("/removeUser/mailinglists/:id", async (req, res) => {
+  console.log("req.body: ", req.body);
+  const mailListId = Number(req.params.id);
+  const recipientId = Number(req.body.recipientId);
+  const mailingList = await removeEmailFromMailingList(mailListId, recipientId);
+  // console.log("mailingListUserId: ", mailingListUserId);
+  res.send(mailingList);
+});
+
+app.put("/updateMailingList/:id", async (req, res) => {
+  const mailListId = Number(req.params.id);
+  const recipientDetails = req.body.recipientDetails;
+  const mailingList = await updateMailingList(mailListId, recipientDetails);
+  res.send(mailingList);
+});
+
 const port = 3000;
 
 app.listen(port, () => {
