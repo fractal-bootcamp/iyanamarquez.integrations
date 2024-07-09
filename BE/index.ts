@@ -12,6 +12,8 @@ import {
 import { Prisma } from "@prisma/client";
 import {
   createNewMailingList,
+  getMailingList,
+  getMailingListDetails,
   getMailingListsByUserId,
 } from "./prisma/mailinglistFunctions";
 import { createNewBlastMail, getAllBlasts } from "./prisma/blastmailFunctions";
@@ -54,6 +56,17 @@ app.get(
     const mailinglist = await getMailingListsByUserId(userId);
     // console.log("mailinglist: ", mailinglist);
     res.send(mailinglist);
+  }
+);
+
+app.get(
+  "/mailinglists/:id",
+  ClerkExpressRequireAuth({}),
+  optionalUser,
+  async (req, res) => {
+    const mailingListId = Number(req.params.id);
+    const mailingList = await getMailingList(mailingListId);
+    res.send(mailingList);
   }
 );
 

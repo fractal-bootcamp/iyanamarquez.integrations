@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
 import axios from 'axios';
 import { useAuth } from '@clerk/clerk-react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
+
 
 const URL = import.meta.env.VITE_REACT_APP_API_URL;
 console.log(URL)
 
 const EmailForm = () => {
+    const navigate = useNavigate(); // Initialize useNavigate
+
     const [emailDetails, setEmailDetails] = useState({
         mailList: '',
         subject: '',
@@ -18,6 +22,7 @@ const EmailForm = () => {
         setEmailDetails({ ...emailDetails, [e.target.name]: e.target.value })
     }
 
+
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         const sendBlast = async () => {
@@ -27,6 +32,8 @@ const EmailForm = () => {
                 }
             })
                 .then(response => {
+                    navigate('/'); // Redirect to the success page
+
                     console.log('Email sent successfully:', response.data);
                 })
                 .catch(error => {
@@ -63,10 +70,10 @@ const EmailForm = () => {
     console.log(emailDetails)
 
 
-    return <div className="bg-blue-100 p-6">
+    return <div className=" p-6">
         <form className="" onSubmit={handleSubmit}>
             <section className="">
-                <div className="py-8 lg:py-16 px-4 mx-auto max-w-screen-md bg-white rounded-xl">
+                <div className="py-8 lg:py-16 px-4 mx-auto max-w-screen-md bg-white rounded-xl bg-gradient-to-r from-violet-200 to-pink-200">
                     <h2 className="mb-4 text-4xl tracking-tight font-extrabold text-center text-gray-900 ">Email Blast Form</h2>
                     <p className="mb-8 lg:mb-16 font-light text-center text-gray-500 sm:text-xl">Send a blast to all members of a mailing list.</p>
 

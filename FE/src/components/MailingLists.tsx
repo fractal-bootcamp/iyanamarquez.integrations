@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import MailListItem from './MailListItem'
 import axios from 'axios'
 import { useAuth } from '@clerk/clerk-react';
+import { Link } from 'react-router-dom';
 
 export default function MailingLists() {
     // form data
@@ -71,9 +72,9 @@ export default function MailingLists() {
     console.log('recipientsList: ', recipientsList)
 
     return (
-        <div className=" py-16 sm:py-24 lg:py-32 bg-pink-100 p-4 flex flex-wrap">
+        <div className="p-6 flex flex-col ">
 
-            <div className=" p-4 bg-white rounded-md shadow-md m-4">
+            <div className=" p-4 bg-white rounded-md shadow-2xl mb-5 self-center md:w-1/2 bg-slate-100">
                 <h2 className="text-xl font-bold mb-4">Create New Mailing List</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="mb-4">
@@ -103,14 +104,14 @@ export default function MailingLists() {
                         />
                     </div>
                     <button
-                        className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-4"
+                        className="bg-pink-500 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-4"
                         type="button"
                         onClick={handleAddEmail}
                     >
                         Add Email
                     </button>
                     <button
-                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                        className="bg-purple-400 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                         type="submit"
                     >
                         Create List
@@ -125,17 +126,39 @@ export default function MailingLists() {
                     </ul>
                 </div>
             </div>
-            <div className="">
-                <h1 className="text-2xl font-bold mb-4">Mailing Lists</h1>
-                {console.log('mailingListsData hereeee: ', mailingListsData)
-                }
-                {mailingListsData.map((mailingList: any, index: any) => (
-                    <MailListItem key={index} name={mailingList.name} recipients={mailingList.recipients} />
-                ))}
-                {/* <MailListItem /> */}
 
+            <div className="p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8 overflow-y-scroll h-[50vh] bg-gradient-to-r from-violet-200 to-pink-200">
+                <div className="flex items-center justify-between mb-4">
+                    <h5 className="text-xl font-bold leading-none text-gray-900">All mailing lists</h5>
+                    List total
+                </div>
+                <div className="flow-root">
+                    <ul role="list" className="divide-y divide-gray-200  rounded-xl ">
+                        {mailingListsData.map((mailingList: any, index: any) => {
+                            return (
+                                <li className="bg-white m-2 rounded-xl p-4">
+                                    <div className="flex items-center">
+                                        <div className="flex-shrink-0">
+                                            <img className="w-8 h-8 rounded-full" src="/docs/images/people/profile-picture-1.jpg" alt="Neil image" />
+                                        </div>
+                                        <div className="flex-1 min-w-0 ms-4">
+                                            <p className="text-sm font-medium text-gray-900 truncate">
+                                                {mailingList.name}
+                                            </p>
+                                            <p className="text-sm text-gray-500 truncate">
+                                                Click to view more                                            </p>
+                                        </div>
+                                        <div className="inline-flex items-center text-base font-semibold text-gray-900">
+                                            <Link to={`/viewlist/${mailingList.id}`}>{mailingList.recipients.length}</Link>
+                                        </div>
+                                    </div>
+                                </li>
+                            )
+                        })}
+                    </ul>
+                </div>
             </div>
-
         </div>
+
     )
 }
