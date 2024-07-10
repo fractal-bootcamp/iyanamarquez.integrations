@@ -42,6 +42,7 @@ app.post(
       mailinglistName,
       recipientsList
     );
+    console.log("creating new email list");
 
     res.send(newList);
   }

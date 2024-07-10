@@ -7,14 +7,29 @@ export const createNewMailingList = async (
   mailinglistName: string,
   recipientsList: string[]
 ) => {
+  const recipientsData = await Promise.all(
+    recipientsList.map(async (email) => {
+      const existingRecipient = await prisma.recipient.findUnique({
+        where: { email: email.trim() },
+      });
+
+      if (existingRecipient) {
+        return { id: existingRecipient.id };
+      } else {
+        const newRecipient = await prisma.recipient.create({
+          data: { email: email.trim() },
+        });
+        return { id: newRecipient.id };
+      }
+    })
+  );
+
   return await prisma.mailingList.create({
     data: {
       name: mailinglistName,
       senderId: user.id,
       recipients: {
-        create: recipientsList.map((email) => ({
-          email: email.trim(),
-        })),
+        connect: recipientsData,
       },
     },
   });
