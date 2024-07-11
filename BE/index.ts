@@ -154,3 +154,41 @@ const port = 3000;
 app.listen(port, () => {
   console.log("Server is running on port 3000");
 });
+
+// const thing = {
+//   tables: [
+//     {
+//       id: "Table1",
+//       fields: {
+//         primaryViewId: 1,
+//         summarySourceTable: 0,
+//         onDemand: false,
+//         rawViewSectionRef: 2,
+//         recordCardViewSectionRef: 3,
+//         tableRef: 1,
+//       },
+//     },
+//     {
+//       id: "Table2",
+//       fields: {
+//         primaryViewId: 2,
+//         summarySourceTable: 0,
+//         onDemand: false,
+//         rawViewSectionRef: 5,
+//         recordCardViewSectionRef: 6,
+//         tableRef: 2,
+//       },
+//     },
+//     {
+//       id: "People",
+//       fields: {
+//         primaryViewId: 3,
+//         summarySourceTable: 0,
+//         onDemand: false,
+//         rawViewSectionRef: 8,
+//         recordCardViewSectionRef: 9,
+//         tableRef: 3,
+//       },
+//     },
+//   ],
+// };

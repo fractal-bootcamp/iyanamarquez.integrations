@@ -15,12 +15,89 @@ import {
   updateMailingList,
 } from "../../../prisma/mailinglistFunctions";
 import https from "https";
+import { GristTablesResponse } from "./types";
+import {
+  getAllGristTables,
+  createGristTable,
+  getGristTable,
+  syncGristTable,
+} from "./grist";
 const GRIST_KEY = process.env.GRIST_KEY;
+const docId = "jwCdg4Ffpuag";
 
 const listRouter = express.Router();
 
 listRouter.get("/", (_req, res) => {
   res.send("hello base list route");
+});
+
+listRouter.get("/createtable", async (_req, res) => {
+  const dataToADD = {
+    tables: [
+      {
+        id: "Mail",
+        columns: [
+          {
+            id: "email",
+            fields: {
+              label: "Email",
+            },
+          },
+          {
+            id: "name",
+            fields: {
+              label: "Name",
+            },
+          },
+        ],
+      },
+    ],
+  };
+  try {
+    const allTables = await createGristTable(docId, dataToADD);
+    res.send(allTables);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error creating table");
+  }
+});
+
+listRouter.get("/synctable", async (_req, res) => {
+  const dataToADD = {
+    records: [
+      {
+        require: {
+          email: "cat@mail.com",
+        },
+        fields: {
+          name: "cat",
+        },
+      },
+      {
+        require: {
+          email: "bob@mail.com",
+        },
+        fields: {
+          name: "bob",
+        },
+      },
+      {
+        require: {
+          email: "doggy@mail.com",
+        },
+        fields: {
+          name: "doggy",
+        },
+      },
+    ],
+  };
+  try {
+    const allTables = await syncGristTable(docId, "9", dataToADD);
+    res.send(allTables);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error getting all tables");
+  }
 });
 
 listRouter.post(
@@ -78,9 +155,9 @@ listRouter.delete("/delete/mailinglist/:id", async (req, res) => {
 });
 
 listRouter.put("/updateMailingList/:id", async (req, res) => {
-  const docId = "jwCdg4Ffpuag";
   const tableId = "1";
   const mailListId = Number(req.params.id);
+
   console.log("mailListId is ", mailListId);
   const recipientDetails = req.body.recipientDetails;
   // adds a user to mailing list

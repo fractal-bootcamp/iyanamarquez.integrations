@@ -46,8 +46,6 @@ const Dashboard = () => {
             </div>
         </div>
         <div className="">
-
-
             <div className="relative overflow-x-auto overflow-y-auto h-[500px]">
                 <table className="w-full text-sm text-left rtl:text-right text-gray-500">
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50">
@@ -61,7 +59,6 @@ const Dashboard = () => {
                             <th scope="col" className="px-6 py-3">
                                 Mailing list
                             </th>
-
                         </tr>
                     </thead>
                     <tbody>
@@ -81,16 +78,11 @@ const Dashboard = () => {
 
                             </tr>
                         ))}
-
-
                     </tbody>
                 </table>
             </div>
-
-
         </div>
     </section>
-
 };
 
 export default Dashboard;
