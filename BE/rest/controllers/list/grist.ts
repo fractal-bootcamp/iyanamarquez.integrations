@@ -119,6 +119,7 @@ export const syncGristTable = async (
   tableId: string,
   dataToADD: any
 ) => {
+  // filter the data before adding
   return new Promise((resolve, reject) => {
     const options = {
       host: "docs.getgrist.com",
