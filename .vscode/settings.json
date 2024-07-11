@@ -1,5 +1,16 @@
 {
   "prisma-smart-formatter.typescript.defaultFormatter": "esbenp.prettier-vscode",
   "prisma-smart-formatter.typescriptreact.defaultFormatter": "vscode.typescript-language-features",
-  "prisma-smart-formatter.prisma.defaultFormatter": "Prisma.prisma"
+  "prisma-smart-formatter.prisma.defaultFormatter": "Prisma.prisma",
+  "rest-client.environmentVariables": {
+        "local": {
+            "baseUrl": "http://localhost",
+            "authToken": "theheader.thepayload.thesignature"
+        },
+        "grist": {
+            "baseUrl": "https://docs.getgrist.com/api/docs/jwCdg4Ffpuag/tables/1/records",
+            "authToken": "",
+        },
+
+  }
 }
