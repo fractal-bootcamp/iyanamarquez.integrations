@@ -63,33 +63,21 @@ listRouter.get("/createtable", async (_req, res) => {
 });
 
 listRouter.get("/synctable", async (_req, res) => {
+  const mailingListId = 3;
+  const mailingListRecipients = await getMailingListDetails(mailingListId);
+  //   get list of emails in grist table,
+  //   get list of emails from mailing list
+  //    and remove the emails that are not in the mailing list
+  //   add the emails that are in the mailing list but not in the grist table
+  //   delete the emails from the grist table that are not in the mailing list
+  //   to delete: get the ids of the rows that need to be removed
+  //
+
   const dataToADD = {
-    records: [
-      {
-        require: {
-          email: "cat@mail.com",
-        },
-        fields: {
-          name: "cat",
-        },
-      },
-      {
-        require: {
-          email: "bob@mail.com",
-        },
-        fields: {
-          name: "bob",
-        },
-      },
-      {
-        require: {
-          email: "doggy@mail.com",
-        },
-        fields: {
-          name: "doggy",
-        },
-      },
-    ],
+    records: mailingListRecipients.map((email) => ({
+      require: { email },
+      fields: { name: email.split("@")[0] }, // Create a name from the email before the @ symbol
+    })),
   };
   try {
     const allTables = await syncGristTable(docId, "9", dataToADD);
