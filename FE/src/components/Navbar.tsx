@@ -22,6 +22,9 @@ const Navbar = () => {
             <div>
                 <Link to="/composeemail">Email composer</Link>
             </div>
+            <div>
+                <Link to="/listsync">List Sync</Link>
+            </div>
         </nav>
     </div>;
 };

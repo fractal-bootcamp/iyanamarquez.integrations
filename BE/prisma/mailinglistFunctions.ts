@@ -7,14 +7,29 @@ export const createNewMailingList = async (
   mailinglistName: string,
   recipientsList: string[]
 ) => {
+  const recipientsData = await Promise.all(
+    recipientsList.map(async (email) => {
+      const existingRecipient = await prisma.recipient.findUnique({
+        where: { email: email.trim() },
+      });
+
+      if (existingRecipient) {
+        return { id: existingRecipient.id };
+      } else {
+        const newRecipient = await prisma.recipient.create({
+          data: { email: email.trim() },
+        });
+        return { id: newRecipient.id };
+      }
+    })
+  );
+
   return await prisma.mailingList.create({
     data: {
       name: mailinglistName,
       senderId: user.id,
       recipients: {
-        create: recipientsList.map((email) => ({
-          email: email.trim(),
-        })),
+        connect: recipientsData,
       },
     },
   });
@@ -117,5 +132,54 @@ export const deleteMailingList = async (mailingListId: number) => {
   const mailingList = await prisma.mailingList.delete({
     where: { id: mailingListId },
   });
+  return mailingList;
+};
+
+// need to sync db tables with grist table
+export const syncMailingList = async (
+  mailingListId: number,
+  gristTableData: any
+) => {
+  let mailingList = await prisma.mailingList.findUnique({
+    where: { id: mailingListId },
+  });
+
+  const recipientsData = await Promise.all(
+    gristTableData.map(async (email) => {
+      const existingRecipient = await prisma.recipient.findUnique({
+        where: { email: email.trim() },
+      });
+
+      if (existingRecipient) {
+        return { id: existingRecipient.id };
+      } else {
+        const newRecipient = await prisma.recipient.create({
+          data: { email: email.trim() },
+        });
+        return { id: newRecipient.id };
+      }
+    })
+  );
+
+  if (!mailingList) {
+    mailingList = await prisma.mailingList.create({
+      data: {
+        name: mailinglistName,
+        senderId: user.id,
+        recipients: {
+          connect: recipientsData,
+        },
+      },
+    });
+  } else {
+    await prisma.mailingList.update({
+      where: { id: mailingListId },
+      data: {
+        recipients: {
+          connect: recipientsData,
+        },
+      },
+    });
+  }
   return mailingList;
 };
