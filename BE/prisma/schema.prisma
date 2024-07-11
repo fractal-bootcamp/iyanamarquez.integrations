@@ -53,13 +53,14 @@ model Message {
 }
 
 model MailingList {
-  id        Int      @id @default(autoincrement())
-  name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  senderId  Int 
+  id           Int      @id @default(autoincrement())
+  name         String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  senderId     Int
+  gristTableId Int?
 
-  sender Sender @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  sender      Sender       @relation(fields: [senderId], references: [id], onDelete: Cascade)
   recipients  Recipient[]  @relation("MailingListRecipients")
   emailBlasts EmailBlast[]
 }
@@ -67,7 +68,7 @@ model MailingList {
 model EmailBlast {
   id           Int      @id @default(autoincrement())
   subject      String
-  body          String
+  body         String
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   targetListId Int
