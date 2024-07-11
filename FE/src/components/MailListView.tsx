@@ -28,7 +28,7 @@ const MailListView = () => {
 
     const fetchMailingLists = async () => {
         try {
-            const response = await axios.get(`${URL}/mailinglists/${mailListId}`, {
+            const response = await axios.get(`${URL}/api/list/mailinglists/${mailListId}`, {
 
                 headers: {
                     'Authorization': `Bearer ${await getToken()}`
@@ -49,7 +49,7 @@ const MailListView = () => {
 
     const deleteEmailFromMailingList = async (mailingListUserId: string) => {
         try {
-            await axios.put(`${URL}/removeUser/mailinglists/${mailListId}`, {
+            await axios.put(`${URL}/api/list/removeUser/mailinglists/${mailListId}`, {
                 recipientId: mailingListUserId,
                 headers: {
                     'Authorization': `Bearer ${await getToken()}`
@@ -66,7 +66,7 @@ const MailListView = () => {
     const addEmailToMailingList = async (e: React.FormEvent<HTMLFormElement>, email: string) => {
         e.preventDefault();
         try {
-            await axios.put(`${URL}/updateMailingList/${mailListId}`, {
+            await axios.put(`${URL}/api/list/updateMailingList/${mailListId}`, {
                 recipientDetails: { email: email }
             })
             navigate(0); // Redirect to the success page

@@ -107,6 +107,8 @@ export const updateMailingList = async (
 
   if (existingRecipient) {
     recipientId = existingRecipient.id;
+    // prevents duplate from being added
+    return;
   } else {
     // Create a new recipient
     const newRecipient = await prisma.recipient.create({

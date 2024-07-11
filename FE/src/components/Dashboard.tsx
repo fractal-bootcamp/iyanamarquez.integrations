@@ -17,7 +17,7 @@ const Dashboard = () => {
 
         const fetchEmailBlasts = async () => {
             try {
-                const response = await axios.get(`${URL}/getAllBlasts`, {
+                const response = await axios.get(`${URL}/api/blast/getAllBlasts`, {
                     headers: {
                         'Authorization': `Bearer ${await getToken()}`
                     }

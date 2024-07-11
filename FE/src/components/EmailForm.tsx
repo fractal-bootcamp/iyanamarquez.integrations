@@ -26,7 +26,7 @@ const EmailForm = () => {
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         const sendBlast = async () => {
-            axios.post(`${URL}/createBlast`, { emailDetails }, {
+            axios.post(`${URL}/api/blast/createBlast`, { emailDetails }, {
                 headers: {
                     'Authorization': `Bearer ${await getToken()}`
                 }
@@ -51,7 +51,7 @@ const EmailForm = () => {
 
         const fetchMailingLists = async () => {
             try {
-                const response = await axios.get(`${URL}/mailinglists`, {
+                const response = await axios.get(`${URL}/api/list/mailinglists`, {
                     headers: {
                         'Authorization': `Bearer ${await getToken()}`
                     }

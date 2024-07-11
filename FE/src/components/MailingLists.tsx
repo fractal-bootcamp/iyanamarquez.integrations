@@ -19,6 +19,7 @@ export default function MailingLists() {
 
     const { getToken, isLoaded, isSignedIn } = useAuth();
     const navigate = useNavigate(); // Initialize useNavigate
+    const URL = import.meta.env.VITE_REACT_APP_API_URL;
 
 
     const handleNewEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -35,7 +36,7 @@ export default function MailingLists() {
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         try {
-            await axios.post('http://localhost:3000/new/mailinglist',
+            await axios.post(`${URL}/api/list/new/mailinglist`,
                 { 'mailinglistName': mailinglistName, 'recipientsList': recipientsList },
                 {
                     headers: {
@@ -58,7 +59,7 @@ export default function MailingLists() {
     const handleDeleteMailingList = async (event: React.FormEvent<HTMLFormElement>, mailingListId: string) => {
         event.preventDefault()
         try {
-            await axios.delete(`http://localhost:3000/delete/mailinglist/${mailingListId}`, {
+            await axios.delete(`${URL}/api/list/delete/mailinglist/${mailingListId}`, {
                 headers: {
                     'Authorization': `Bearer ${await getToken()}`
                 }
@@ -74,7 +75,7 @@ export default function MailingLists() {
     useEffect(() => {
         const fetchMailingLists = async () => {
             try {
-                const response = await axios.get('http://localhost:3000/mailinglists', {
+                const response = await axios.get(`${URL}/api/list/mailinglists`, {
                     headers: {
                         'Authorization': `Bearer ${await getToken()}`
                     }

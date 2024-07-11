@@ -42,7 +42,7 @@ const ListSync = () => {
     // add new email to grist table
     const updateList = async () => {
         try {
-            const response = await axios.post(`${URL}/updateList`, {
+            const response = await axios.post(`${URL}/api/list/updateList`, {
                 headers: {
                     'Authorization': `Bearer ${await getToken()}`
                 },
