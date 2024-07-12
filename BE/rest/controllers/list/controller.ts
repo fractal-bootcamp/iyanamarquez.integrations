@@ -15,39 +15,27 @@ import {
   updateMailingList,
 } from "../../../prisma/mailinglistFunctions";
 import https from "https";
-import { GristTablesResponse } from "./types";
 import {
   getAllGristTables,
   createGristTable,
   getGristTable,
   syncGristTable,
+  getGristTableFromName,
 } from "./grist";
 const GRIST_KEY = process.env.GRIST_KEY;
 const docId = "jwCdg4Ffpuag";
 const tableId = "10";
+const newTableName = "NewTablee";
 
 const listRouter = express.Router();
 
 listRouter.get("/", async (_req, res) => {
-  console.log("hello");
-  const tablecontents = await getGristTable(docId, tableId);
-  //   returns {
-  //   "records": [
-  //     {
-  //       "id": 1,
-  //       "fields": {
-  //         "email": "cat@mail.com",
-  //         "name": "cat"
-  //       }
-  //     },
-  //     {
-  //       "id": 2,
-  //       "fields": {
-  //         "email": "dog@mail.com",
-  //         "name": "dog"
-  //       }
-  //     },
-  //     }
+  const tablecontents = await getGristTable(docId, "NewTablee");
+  res.send(tablecontents);
+});
+
+listRouter.get("/alltables", async (_req, res) => {
+  const tablecontents = await getAllGristTables(docId);
   res.send(tablecontents);
 });
 
@@ -55,7 +43,7 @@ listRouter.get("/createtable", async (_req, res) => {
   const dataToADD = {
     tables: [
       {
-        id: "Mail",
+        id: newTableName,
         columns: [
           {
             id: "email",
@@ -74,8 +62,18 @@ listRouter.get("/createtable", async (_req, res) => {
     ],
   };
   try {
-    const allTables = await createGristTable(docId, dataToADD);
-    res.send(allTables);
+    // undefined new table
+    const newTable = await createGristTable(docId, dataToADD);
+    console.log("newTable isss44 ", newTable);
+    // getgristtablefromname
+    const tablecontents = await getAllGristTables(docId);
+    const table = tablecontents.tables.find(
+      (table: any) => table.id === newTable.id
+    );
+    // this id allows you to see the actual table
+    // can be used to link to mailing list
+    const currTableId = table?.fields.primaryViewId;
+    res.send(table);
   } catch (error) {
     console.error(error);
     res.status(500).send("Error creating table");
@@ -136,8 +134,6 @@ listRouter.post(
       mailinglistName,
       recipientsList
     );
-    console.log("creating new email list");
-
     res.send(newList);
   }
 );
