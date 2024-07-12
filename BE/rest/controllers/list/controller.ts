@@ -24,11 +24,31 @@ import {
 } from "./grist";
 const GRIST_KEY = process.env.GRIST_KEY;
 const docId = "jwCdg4Ffpuag";
+const tableId = "10";
 
 const listRouter = express.Router();
 
-listRouter.get("/", (_req, res) => {
-  res.send("hello base list route");
+listRouter.get("/", async (_req, res) => {
+  console.log("hello");
+  const tablecontents = await getGristTable(docId, tableId);
+  //   returns {
+  //   "records": [
+  //     {
+  //       "id": 1,
+  //       "fields": {
+  //         "email": "cat@mail.com",
+  //         "name": "cat"
+  //       }
+  //     },
+  //     {
+  //       "id": 2,
+  //       "fields": {
+  //         "email": "dog@mail.com",
+  //         "name": "dog"
+  //       }
+  //     },
+  //     }
+  res.send(tablecontents);
 });
 
 listRouter.get("/createtable", async (_req, res) => {
@@ -64,15 +84,30 @@ listRouter.get("/createtable", async (_req, res) => {
 
 listRouter.get("/synctable", async (_req, res) => {
   const mailingListId = 3;
-  const mailingListRecipients = await getMailingListDetails(mailingListId);
-  //   get list of emails in grist table,
-  //   get list of emails from mailing list
-  //    and remove the emails that are not in the mailing list
-  //   add the emails that are in the mailing list but not in the grist table
-  //   delete the emails from the grist table that are not in the mailing list
-  //   to delete: get the ids of the rows that need to be removed
-  //
+  // here i want to grab any new emails from grist and then add them to the mailing list
+  const gristTableRecipients = await getGristTable(docId, tableId);
+  const gristTableRecipientsEmails = gristTableRecipients.records.map(
+    (recipient: any) => recipient.fields.email
+  );
+  // gristTableRecipientsEmails looks like this:
+  //   gristTableRecipientsEmails is  [
+  //   "cat@mail.com", "dog@mail.com", "doggy@mail.com", "bob@mail.com", "naturegurl21", "erm@sigma.com",
+  //   "okayman@bruh.com", "okaaaayman@bruh.com", "helloerm@sigma.com", "hellooerm@sigma.com",
+  //   "helloooerm@sigma.com", "ermm@sigma.com", "bruh@bruh.com", "hiya@mail.com", "erjm@sigma.com",
+  //   "ermmagawd@sigma.com", "freakbob@mail.com", "fbeukfbeku", "bruheugfikewf@mail.com", "ellonew@bruh.com",
+  //   "addnew@mail.com", "burhmoemnt@mail.com", "banana@mail.com", "hiya22@mail.com"
+  // ]
+  //   prisma call to add emails to db if they are new
+  //   returns updated mailing list
+  const updatedMailingList = await updateMailingList(
+    mailingListId,
+    gristTableRecipientsEmails
+  );
 
+  //   after adding new emails, just grab all the emails and add them to grist
+  const mailingListRecipients = await getMailingListDetails(
+    updatedMailingList.id
+  );
   const dataToADD = {
     records: mailingListRecipients.map((email) => ({
       require: { email },
@@ -80,7 +115,7 @@ listRouter.get("/synctable", async (_req, res) => {
     })),
   };
   try {
-    const allTables = await syncGristTable(docId, "9", dataToADD);
+    const allTables = await syncGristTable(docId, tableId, dataToADD);
     res.send(allTables);
   } catch (error) {
     console.error(error);
@@ -146,25 +181,30 @@ listRouter.put("/updateMailingList/:id", async (req, res) => {
   const tableId = "1";
   const mailListId = Number(req.params.id);
 
-  console.log("mailListId is ", mailListId);
-  const recipientDetails = req.body.recipientDetails;
-  // adds a user to mailing list
+  //   console.log("mailListId is ", mailListId);
+  const recipientDetails = [req.body.recipientDetails.email];
+  console.log("recipientDetails is ", recipientDetails);
+  //   recipientDetails is  {
+  //   email: "manbruh@mail.com",
+  // }
+  //   // adds a user to mailing list
+  //   may need to fix this later, recipient details is an array now
+
   const updatedMailingList = await updateMailingList(
     mailListId,
     recipientDetails
   );
   // prevents duplate from being added
-  if (updatedMailingList) {
-    console.log("updatedMailingList is ", updatedMailingList);
+  const listOfRecipients = updatedMailingList.recipients;
+
+  if (listOfRecipients.length > 0) {
     let dataToADD = {
-      records: [
-        {
-          fields: {
-            A: recipientDetails.name,
-            B: recipientDetails.email,
-          },
+      records: listOfRecipients.map((recipient) => ({
+        fields: {
+          A: recipient.name,
+          B: recipient.email,
         },
-      ],
+      })),
     };
     // TODO: update grist to match my db
 
@@ -205,3 +245,8 @@ listRouter.put("/updateMailingList/:id", async (req, res) => {
 });
 
 export default listRouter;
+
+// performming a sync
+// get remote table contents
+// compare email data to my local db
+// when done, push new contents to remote grist table

@@ -120,10 +120,13 @@ export const syncGristTable = async (
   dataToADD: any
 ) => {
   // filter the data before adding
+  //   before this, i need to make sure adding to grist, causes the db to get new emails added
+  console.log("dataToADD is ", dataToADD);
+  //   Adds data from LOCAL DB to grist table
   return new Promise((resolve, reject) => {
     const options = {
       host: "docs.getgrist.com",
-      port: 443,
+      //   port: 443,
       path: `/api/docs/${docId}/tables/${10}/records`,
       method: "PUT",
       headers: {
@@ -144,3 +147,5 @@ export const syncGristTable = async (
       .end(JSON.stringify(dataToADD));
   });
 };
+
+// need to do a sync that gets data from grist, and then compares it to local db
