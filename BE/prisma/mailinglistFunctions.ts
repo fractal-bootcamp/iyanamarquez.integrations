@@ -96,35 +96,44 @@ export const removeEmailFromMailingList = async (
 
 export const updateMailingList = async (
   mailingListId: number,
-  recipientDetails: { email: string }
+  recipientDetails: string[]
 ) => {
-  // Check if the recipient already exists
-  const existingRecipient = await prisma.recipient.findUnique({
-    where: { email: recipientDetails.email },
-  });
+  console.log("recipientDetails is ", recipientDetails);
+  //   recipientDetails is  [
+  //   "cat@mail.com", "dog@mail.com", "doggy@mail.com", "bob@mail.com", "naturegurl21", "erm@sigma.com",
+  //   "okayman@bruh.com", "okaaaayman@bruh.com", "helloerm@sigma.com", "hellooerm@sigma.com",
+  //   "helloooerm@sigma.com", "ermm@sigma.com", "bruh@bruh.com", "hiya@mail.com", "erjm@sigma.com",
+  //   "ermmagawd@sigma.com", "freakbob@mail.com", "fbeukfbeku", "bruheugfikewf@mail.com", "ellonew@bruh.com",
+  //   "addnew@mail.com", "burhmoemnt@mail.com", "banana@mail.com", "hiya22@mail.com"
+  // ]
+  const recipientIds = await Promise.all(
+    recipientDetails.map(async (email) => {
+      const existingRecipient = await prisma.recipient.findUnique({
+        where: { email: email.trim() },
+      });
 
-  let recipientId;
+      if (existingRecipient) {
+        console.log("user exists");
+        return existingRecipient.id;
+      } else {
+        console.log("user does not exist");
+        const newRecipient = await prisma.recipient.create({
+          data: { email: email.trim() },
+        });
+        return newRecipient.id;
+      }
+    })
+  );
 
-  if (existingRecipient) {
-    recipientId = existingRecipient.id;
-    // prevents duplate from being added
-    return;
-  } else {
-    // Create a new recipient
-    const newRecipient = await prisma.recipient.create({
-      data: { email: recipientDetails.email },
-    });
-    recipientId = newRecipient.id;
-  }
-
-  // Link the recipient to the mailing list
+  // Link the recipients to the mailing list
   const mailingList = await prisma.mailingList.update({
     where: { id: mailingListId },
     data: {
       recipients: {
-        connect: { id: recipientId },
+        connect: recipientIds.map((id) => ({ id })),
       },
     },
+    include: { recipients: true },
   });
 
   return mailingList;

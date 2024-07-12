@@ -69,7 +69,7 @@ app.get(
   async (req, res) => {
     // eventually replace this get to only get from my db, not grist
     const docId = req.params.tableName;
-    const tableId = "1";
+    const tableId = "10";
     var options = {
       host: "docs.getgrist.com",
       port: 443, // Use 443 for HTTPS

@@ -82,9 +82,9 @@ const ListSync = () => {
                             </thead>
                             <tbody>
                                 {tableData.map((data: any) => (
-                                    <tr key={data.id} className="odd:bg-white even:bg-gray-100 ">
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 ">{data.fields.A}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 ">{data.fields.B}</td>
+                                    <tr key={data.fields.id} className="odd:bg-white even:bg-gray-100 ">
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 ">{data.fields.email}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 ">{data.fields.name}</td>
                                     </tr>))}
 
                             </tbody>
