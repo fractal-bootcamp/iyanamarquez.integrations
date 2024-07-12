@@ -69,7 +69,8 @@ app.get(
   async (req, res) => {
     // eventually replace this get to only get from my db, not grist
     const docId = req.params.tableName;
-    const tableId = "10";
+    // TODO change this
+    const tableId = "29";
     var options = {
       host: "docs.getgrist.com",
       port: 443, // Use 443 for HTTPS
@@ -102,93 +103,8 @@ app.get(
       .end();
   }
 );
-
-// app.post("/gristtable", async (req, res) => {
-//   const docId = "jwCdg4Ffpuag";
-//   const tableId = "1";
-
-//   let dataToADD = {
-//     records: [
-//       { fields: { name: "dbob", email: "dbob@mail.com" } },
-//       { fields: { name: "dpatty", email: "dpatty@mail.com" } },
-//     ],
-//   };
-
-//   var options = {
-//     host: "docs.getgrist.com",
-//     port: 443, // Use 443 for HTTPS
-//     path: `/api/docs/${docId}/tables/${tableId}/records`,
-//     method: "POST",
-//     body: JSON.stringify(dataToADD),
-//     headers: {
-//       Accept: "application/json",
-//       Authorization: `Bearer ${GRIST_KEY}`,
-//       "Content-Type": "application/json",
-//     },
-//   };
-
-//   https
-//     .request(options, function (apiRes) {
-//       let data = "";
-//       console.log("apiRes", apiRes);
-
-//       // Collect response data
-//       apiRes.on("data", function (chunk) {
-//         data += chunk;
-//       });
-
-//       // Send the complete response back to the client
-//       apiRes.on("end", function () {
-//         console.log(data);
-//         res.send(data);
-//       });
-//     })
-//     .on("error", function (e) {
-//       console.error(`Problem with request: ${e.message}`);
-//     })
-//     .end();
-//   // results look like
-// });
 const port = 3000;
 
 app.listen(port, () => {
   console.log("Server is running on port 3000");
 });
-
-// const thing = {
-//   tables: [
-//     {
-//       id: "Table1",
-//       fields: {
-//         primaryViewId: 1,
-//         summarySourceTable: 0,
-//         onDemand: false,
-//         rawViewSectionRef: 2,
-//         recordCardViewSectionRef: 3,
-//         tableRef: 1,
-//       },
-//     },
-//     {
-//       id: "Table2",
-//       fields: {
-//         primaryViewId: 2,
-//         summarySourceTable: 0,
-//         onDemand: false,
-//         rawViewSectionRef: 5,
-//         recordCardViewSectionRef: 6,
-//         tableRef: 2,
-//       },
-//     },
-//     {
-//       id: "People",
-//       fields: {
-//         primaryViewId: 3,
-//         summarySourceTable: 0,
-//         onDemand: false,
-//         rawViewSectionRef: 8,
-//         recordCardViewSectionRef: 9,
-//         tableRef: 3,
-//       },
-//     },
-//   ],
-// };

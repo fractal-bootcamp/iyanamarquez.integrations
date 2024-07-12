@@ -11,6 +11,7 @@ import {
   getMailingList,
   getMailingListDetails,
   getMailingListsByUserId,
+  linkMailingListToGristTable,
   removeEmailFromMailingList,
   updateMailingList,
 } from "../../../prisma/mailinglistFunctions";
@@ -24,8 +25,11 @@ import {
 } from "./grist";
 const GRIST_KEY = process.env.GRIST_KEY;
 const docId = "jwCdg4Ffpuag";
-const tableId = "10";
-const newTableName = "NewTablee";
+const tableId = "29";
+const gristTableId = 29;
+const testMailListId = 12;
+
+const newTableName = "testtable";
 
 const listRouter = express.Router();
 
@@ -80,22 +84,19 @@ listRouter.get("/createtable", async (_req, res) => {
   }
 });
 
-listRouter.get("/synctable", async (_req, res) => {
-  const mailingListId = 3;
+listRouter.get("/synctable/:maillistid", async (req, res) => {
+  // need to manually connect maillist to grist table until its automatic upon creation
+  const mailingListId = Number(req.params.maillistid);
+  //   make it 12
+  // table is gonna be 29
+
+  // TODO update this later
   // here i want to grab any new emails from grist and then add them to the mailing list
   const gristTableRecipients = await getGristTable(docId, tableId);
   const gristTableRecipientsEmails = gristTableRecipients.records.map(
     (recipient: any) => recipient.fields.email
   );
-  // gristTableRecipientsEmails looks like this:
-  //   gristTableRecipientsEmails is  [
-  //   "cat@mail.com", "dog@mail.com", "doggy@mail.com", "bob@mail.com", "naturegurl21", "erm@sigma.com",
-  //   "okayman@bruh.com", "okaaaayman@bruh.com", "helloerm@sigma.com", "hellooerm@sigma.com",
-  //   "helloooerm@sigma.com", "ermm@sigma.com", "bruh@bruh.com", "hiya@mail.com", "erjm@sigma.com",
-  //   "ermmagawd@sigma.com", "freakbob@mail.com", "fbeukfbeku", "bruheugfikewf@mail.com", "ellonew@bruh.com",
-  //   "addnew@mail.com", "burhmoemnt@mail.com", "banana@mail.com", "hiya22@mail.com"
-  // ]
-  //   prisma call to add emails to db if they are new
+
   //   returns updated mailing list
   const updatedMailingList = await updateMailingList(
     mailingListId,
@@ -174,7 +175,6 @@ listRouter.delete("/delete/mailinglist/:id", async (req, res) => {
 });
 
 listRouter.put("/updateMailingList/:id", async (req, res) => {
-  const tableId = "1";
   const mailListId = Number(req.params.id);
 
   //   console.log("mailListId is ", mailListId);
@@ -238,6 +238,16 @@ listRouter.put("/updateMailingList/:id", async (req, res) => {
   } else {
     console.log("error adding user");
   }
+});
+
+// route that links mailing list to grist table
+listRouter.get("/linkMailingListToGristTable/:id", async (req, res) => {
+  const mailListId = Number(req.params.id);
+  const mailingList = await linkMailingListToGristTable(
+    mailListId,
+    gristTableId
+  );
+  res.send(mailingList);
 });
 
 export default listRouter;

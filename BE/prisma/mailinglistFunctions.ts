@@ -187,3 +187,14 @@ export const syncMailingList = async (
   }
   return mailingList;
 };
+export const linkMailingListToGristTable = async (
+  mailingListId: number,
+  gristTableId: number
+) => {
+  console.log("ehllo");
+  const mailingList = await prisma.mailingList.update({
+    where: { id: 3 },
+    data: { gristTableId: gristTableId },
+  });
+  return mailingList;
+};

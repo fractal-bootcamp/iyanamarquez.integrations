@@ -1,5 +1,10 @@
 import https from "https";
-import { GristTablesResponse, Table } from "./types";
+import {
+  GristTableRecipient,
+  GristTableRecipientObject,
+  GristTablesResponse,
+  Table,
+} from "./types";
 const GRIST_KEY = process.env.GRIST_KEY;
 // const docId = "jwCdg4Ffpuag";
 
@@ -99,7 +104,10 @@ export const createGristTable = async (
   return newTable as Table;
 };
 
-export const getGristTable = async (docId: string, tableId: string) => {
+export const getGristTable = async (
+  docId: string,
+  tableId: string
+): Promise<GristTableRecipientObject> => {
   return new Promise((resolve, reject) => {
     const options = {
       host: "docs.getgrist.com",
@@ -118,7 +126,7 @@ export const getGristTable = async (docId: string, tableId: string) => {
           data += chunk;
         });
         apiRes.on("end", function () {
-          resolve(JSON.parse(data) as GristTablesResponse);
+          resolve(JSON.parse(data) as GristTableRecipientObject);
         });
       })
       //   .write())
@@ -139,7 +147,7 @@ export const syncGristTable = async (
     const options = {
       host: "docs.getgrist.com",
       //   port: 443,
-      path: `/api/docs/${docId}/tables/${10}/records`,
+      path: `/api/docs/${docId}/tables/${tableId}/records`,
       method: "PUT",
       headers: {
         Accept: "application/json",

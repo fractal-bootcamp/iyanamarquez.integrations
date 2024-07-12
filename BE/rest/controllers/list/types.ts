@@ -13,3 +13,15 @@ export interface Table {
 export interface GristTablesResponse {
   tables: Table[];
 }
+
+export interface GristTableRecipient {
+  id: number;
+  fields: {
+    email: string;
+    name: string;
+  };
+}
+
+export type GristTableRecipientObject = {
+  records: GristTableRecipient[];
+};
