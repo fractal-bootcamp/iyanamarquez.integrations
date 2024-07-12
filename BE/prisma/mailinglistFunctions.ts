@@ -98,14 +98,6 @@ export const updateMailingList = async (
   mailingListId: number,
   recipientDetails: string[]
 ) => {
-  console.log("recipientDetails is ", recipientDetails);
-  //   recipientDetails is  [
-  //   "cat@mail.com", "dog@mail.com", "doggy@mail.com", "bob@mail.com", "naturegurl21", "erm@sigma.com",
-  //   "okayman@bruh.com", "okaaaayman@bruh.com", "helloerm@sigma.com", "hellooerm@sigma.com",
-  //   "helloooerm@sigma.com", "ermm@sigma.com", "bruh@bruh.com", "hiya@mail.com", "erjm@sigma.com",
-  //   "ermmagawd@sigma.com", "freakbob@mail.com", "fbeukfbeku", "bruheugfikewf@mail.com", "ellonew@bruh.com",
-  //   "addnew@mail.com", "burhmoemnt@mail.com", "banana@mail.com", "hiya22@mail.com"
-  // ]
   const recipientIds = await Promise.all(
     recipientDetails.map(async (email) => {
       const existingRecipient = await prisma.recipient.findUnique({
@@ -154,6 +146,7 @@ export const syncMailingList = async (
   let mailingList = await prisma.mailingList.findUnique({
     where: { id: mailingListId },
   });
+  console.log("mailingList iss ", mailingList);
 
   const recipientsData = await Promise.all(
     gristTableData.map(async (email) => {

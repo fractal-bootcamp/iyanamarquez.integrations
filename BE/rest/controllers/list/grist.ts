@@ -1,10 +1,12 @@
 import https from "https";
-import { GristTablesResponse } from "./types";
+import { GristTablesResponse, Table } from "./types";
 const GRIST_KEY = process.env.GRIST_KEY;
 // const docId = "jwCdg4Ffpuag";
 
 // gets project id and returns all tables
-export const getAllGristTables = (docId: string) => {
+export const getAllGristTables = (
+  docId: string
+): Promise<GristTablesResponse> => {
   return new Promise((resolve, reject) => {
     const options = {
       host: "docs.getgrist.com",
@@ -34,10 +36,11 @@ export const getAllGristTables = (docId: string) => {
   });
 };
 
+// Creates a new table in grist, and returns the new table
 export const createGristTable = async (
   docId: string,
   tableToADD: any
-): Promise<GristTablesResponse> => {
+): Promise<Table> => {
   // example of test data to add
   //     {
   //   "tables": [
@@ -61,7 +64,7 @@ export const createGristTable = async (
   //   ]
   // }
 
-  return new Promise((resolve, reject) => {
+  const newlyCreatedTable = await new Promise((resolve, reject) => {
     const options = {
       host: "docs.getgrist.com",
       port: 443,
@@ -79,12 +82,21 @@ export const createGristTable = async (
           data += chunk;
         });
         apiRes.on("end", function () {
+          console.log("data is ", data);
           resolve(JSON.parse(data) as GristTablesResponse);
         });
       })
       //   .write())
       .end(JSON.stringify(tableToADD));
   });
+  // returns name of new table made
+  const newTableNameInfo: string = (newlyCreatedTable as GristTablesResponse)
+    .tables[0].id;
+  // use name to do lookup for actual table info
+  const newTable = await getGristTableFromName(docId, newTableNameInfo);
+
+  console.log("newTable is ", newTable);
+  return newTable as Table;
 };
 
 export const getGristTable = async (docId: string, tableId: string) => {
@@ -149,3 +161,14 @@ export const syncGristTable = async (
 };
 
 // need to do a sync that gets data from grist, and then compares it to local db
+
+export const getGristTableFromName = async (
+  docId: string,
+  tableName: string
+): Promise<Table | undefined> => {
+  const tablecontents = await getAllGristTables(docId);
+  const table = tablecontents.tables.find(
+    (table: Table) => table.id === tableName
+  );
+  return table;
+};
