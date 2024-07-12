@@ -1,5 +1,7 @@
 import { PrismaClient, Sender } from "@prisma/client";
+import { createGristTable } from "../rest/controllers/list/grist";
 const prisma = new PrismaClient();
+const docId = "jwCdg4Ffpuag";
 
 // export async function main() {
 export const createNewMailingList = async (
@@ -24,6 +26,30 @@ export const createNewMailingList = async (
     })
   );
 
+  // create a new grist table, get the id and attach it to the mailing list
+  const dataToADD = {
+    tables: [
+      {
+        id: mailinglistName,
+        columns: [
+          {
+            id: "email",
+            fields: {
+              label: "Email",
+            },
+          },
+          {
+            id: "name",
+            fields: {
+              label: "Name",
+            },
+          },
+        ],
+      },
+    ],
+  };
+  const gristTable = await createGristTable(docId, dataToADD);
+
   return await prisma.mailingList.create({
     data: {
       name: mailinglistName,
@@ -31,6 +57,7 @@ export const createNewMailingList = async (
       recipients: {
         connect: recipientsData,
       },
+      gristTableId: Number(gristTable.id),
     },
   });
 };
